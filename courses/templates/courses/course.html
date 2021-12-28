@@ -1,0 +1,131 @@
+{% extends "courses/layout.html" %}
+
+{% block title %} Courses Platform | {{ course.title }}{% endblock %}
+
+{% block body %}
+
+<div class="container">
+ 
+    <p><h2 class="mt-4 mb-3">{{ course.title }}</h2></p>
+    
+    <div class="row mb-3 mt-5">
+        
+        <div class="col-md-4">
+
+            {% if user.is_authenticated %}
+                <form action="{% url 'enroll' %}" method="POST">
+                    <div class="d-grid gap-2 mb-4">          
+                        {% csrf_token %}
+                        <input name="course_id" value="{{ course.id }}" type="hidden">
+                        <button type="submit" id="btn_enroll" class="btn {{ btn_disabled }}">{{ btn_innerHtml }}</button>
+                    </div>
+                </form>  
+            {% endif %}
+     
+            {% if enrolled == True %}
+                <h5>Course progress:</h5>
+                <div class="progress mb-3">
+                    <div id="course_progress_bar" class="progress-bar" role="progressbar" style="width: {{ progress }}%;" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div id="course_progress" class="percentage">{{ progress }}%</div>
+                </div>
+                
+                <div class="accordion" id="accordionPanelsStayOpenExample">
+                    {% for module in course.modules %}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="panelsStayOpen-heading{{ module.id }}">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse{{ module.id }}" 
+                            aria-expanded="false" aria-controls="panelsStayOpen-collapse{{ module.id }}">
+                            {% if module.done == True %}
+                                <i id="mod_done_{{ module.id }}" class="me-2 bi bi-check-circle-fill" style="color: green;"></i>
+                            {% else %}
+                                <i id="mod_done_{{ module.id }}" class="me-2 bi bi-check-circle" style="color: gray;"></i>
+                            {% endif %}
+                            {{ module.title }}
+                            </button>
+                        </h2>
+                        <div id="panelsStayOpen-collapse{{ module.id }}" 
+                        
+                        class="accordion-collapse collapse" 
+                        
+                        aria-labelledby="panelsStayOpen-heading{{ module.id }}">
+                            <div class="accordion-body">
+                                <ol>
+                                {% for lesson in module.lessons %} 
+                                    {% if lesson.module == module %}
+                                        <li>
+                                            {% if lesson.done == True %}
+                                                    <i id="tx_done_menu_{{ lesson.id }}" class="mx-1 bi bi-check-square-fill" style="color: green;"></i>
+                                                {% else %}
+                                                    <i id="tx_done_menu_{{ lesson.id }}" class="mx-1 bi bi-check-square" style="color: gray;"></i>
+                                                {% endif %}
+                                            <a class="link-dark text-decoration-none" id="myLink{{ lesson.id }}" href="{% url 'lesson' lesson.id %}">{{ lesson.title }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %} 
+                                </ol>                                                               
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}    
+                </div>  
+
+            {% else %}
+            
+                <div class="accordion" id="accordionPanelsStayOpenExample">
+                    {% for module in course.modules %}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="panelsStayOpen-heading{{ module.id }}">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse{{ module.id }}" 
+                            aria-expanded="false" aria-controls="panelsStayOpen-collapse{{ module.id }}">
+                            {{ module.title }}
+                            </button>
+                        </h2>
+                        <div id="panelsStayOpen-collapse{{ module.id }}" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-heading{{ module.id }}">
+                            <div class="accordion-body">
+                                <ol>
+                                {% for lesson in module.lessons %} 
+                                    {% if lesson.module == module %}
+                                        <li><spam class="link-dark text-decoration-none" id="myLink{{ lesson.id }}">{{ lesson.title }}</spam></li>
+                                    {% endif %}
+                                {% endfor %} 
+                                </ol>                                                               
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}    
+                </div> 
+            {% endif %}   
+                 
+        </div>
+        <br>
+            
+        <div class="col-md-8">    
+            
+            {% if course.videoUrl is not none %}            
+                <div id="video" class="mb-4">                
+                    <div class="ratio ratio-16x9"  style="width: 100%">
+                        <iframe src="{{ course.videoUrl }}" title="{{ course.title }}" allowfullscreen></iframe>
+                    </div>                
+                </div>
+            {% endif %}
+            <div class="mb-3">
+                <h4>{{ course.title }}</h4>
+                <p>{{ course.description }}</p>
+            </div>
+
+            {% if enrolled == True %}
+                <div class="mt-5 mb-3">
+                    <p><strong>If you want to cancel your enroll for this course, click the button below.</strong></p>
+                    <form action="{% url 'cancel_enroll' %}" method="POST">
+                        {% csrf_token %}
+                        <input name="course_id" value="{{ course.id }}" type="hidden">
+                        <button type="submit" class="btn-danger btn btn-sm">Cancel Enroll</button>
+                    </form>
+                </div>
+            {% endif %}  
+
+        </div>    
+    </div>   
+</div>
+
+{% endblock %}

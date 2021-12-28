@@ -1,0 +1,39 @@
+{% extends "courses/layout.html" %}
+
+{% block title %} Courses Platform {% endblock %}
+
+{% block body %}
+
+<div class="album py-5">
+    <div class="container">
+        <h3 class="mb-3">All Courses</h3>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            {% for course in courses %}
+            <div class="col">
+                <div class="card shadow-sm divcard">
+                
+                {% if course.imageUrl == "" or course.imageUrl == none %}
+                    {% load static %} <a href="{% url 'course' course.id %}"><img src="{% static "courses/media/img.jpg" %}" class="card-img-top" alt="Image: {{ course.title }}" /></a>
+                {% else %}
+                    <a href="{% url 'course' course.id %}"><img src="{{ course.imageUrl }}" class="card-img-top" alt="Image: {{ course.title }}" /></a>
+                {% endif %}
+                
+                <div class="card-body">
+                    <h5 class="card-title">{{ course.title }}</h5>
+                    <p class="card-text text-justify">{{ course.description|truncatechars:120 }}</p>
+                    
+                    <div class="text-end">
+                        <div class="btn-group">
+                            <a href="{% url 'course' course.id %}" class="btn btn-sm btn-outline-success">View</a>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

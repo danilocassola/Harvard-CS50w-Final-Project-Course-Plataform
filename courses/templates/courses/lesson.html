@@ -1,0 +1,95 @@
+{% extends "courses/layout.html" %}
+
+{% block title %} Courses Platform | {{ lesson.title }} {% endblock %}
+
+{% block body %}
+
+    <div class="container">
+        <p>
+            <a href="{% url 'course' lesson.course.id %}" class="link-dark text-decoration-none">
+                <h2 class="mt-4 mb-3 ">{{ lesson.course.title }}</h2>
+            </a>
+        </p>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                
+                    <h5>Course progress:</h5>
+                    <div class="progress mb-3">
+                        <div id="course_progress_bar" class="progress-bar" role="progressbar" style="width: {{ progress }}%;" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div id="course_progress" class="percentage">{{ progress }}%</div>
+                    </div>
+                   
+                <div class="accordion" id="accordionPanelsStayOpenExample">
+                    {% for module in modules %}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="panelsStayOpen-heading{{ module.id }}">
+                            <button class="accordion-button {% if module.id != lesson.module.id %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse{{ module.id }}" 
+                            aria-expanded="{% if module.id == lesson.module.id %}true{% else %}false{% endif %}" aria-controls="panelsStayOpen-collapse{{ module.id }}">
+                            {% if module.done == True %}
+                                <i id="mod_done_{{ module.id }}" class="me-2 bi bi-check-circle-fill" style="color: green;"></i>
+                            {% else %}
+                                <i id="mod_done_{{ module.id }}" class="me-2 bi bi-check-circle" style="color: gray;"></i>
+                            {% endif %}
+                            {{ module.title }} 
+                            
+                            </button>
+                        </h2>
+                        <div id="panelsStayOpen-collapse{{ module.id }}" class="accordion-collapse collapse {% if module.id == lesson.module.id %}show{% endif %}" aria-labelledby="panelsStayOpen-heading{{ module.id }}">
+                            <div class="accordion-body">
+                                 
+                                <ol>
+                                {% for les in module.lessons %} 
+                                    {% if les.module == module %}                                        
+                                            <li>
+                                                {% if les.done == True %}
+                                                    <i id="tx_done_menu_{{ les.id }}" class="mx-1 bi bi-check-square-fill" style="color: green;"></i>
+                                                {% else %}
+                                                    <i id="tx_done_menu_{{ les.id }}" class="mx-1 bi bi-check-square" style="color: gray;"></i>
+                                                {% endif %}
+                                                <a class="link-secondary text-decoration-none" id="myLink{{ les.id }}" href="{% url 'lesson' les.id %}">
+                                                    {% if les.title == lesson.title %}
+                                                        <strong>{{ les.title }}</strong>
+                                                    {% else %}
+                                                        {{ les.title }}
+                                                    {% endif %}
+                                                </a>                                                
+                                            </li>                                      
+                                    {% endif %}
+                                {% endfor %}    
+                                </ol>                                                            
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}    
+                </div>  
+            </div>
+            <br>
+                
+            <div class="col-md-8">
+                <div class="mb-2 mt-3 d-flex align-items-center justify-content-end">
+                    {% if lesson.done == True %}
+                        <spam id="text_done_{{ lesson.id }}">Mark as undone:</spam> 
+                        <a href="#" onclick="done_lesson({{ lesson.id }})"><i id="mark_{{ lesson.id }}" class="ms-2 bi bi-check-circle-fill" style="font-size: 28px; color: green;"></i></a>
+                    {% else %}
+                        <spam id="text_done_{{ lesson.id }}">Mark as done:</spam> 
+                        <a href="#" onclick="done_lesson({{ lesson.id }})"><i id="mark_{{ lesson.id }}" class="ms-2 bi bi-check-circle" style="font-size: 28px; color: gray;"></i></a>
+                    {% endif %}
+                </div> 
+                {% if lesson.videoUrl is not none %}
+                    <div id="video" class="mb-3">
+                        <div class="ratio ratio-16x9"  style="width: 100%">
+                            <iframe src="{{ lesson.videoUrl }}" title="{{ lesson.title }}" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="mb-3">
+                    <h4>{{ lesson.title }}</h4>
+                    <p>{{ lesson.description }}</p>
+                </div>
+            </div>
+            
+        </div>
+      
+    </div>
+
+{% endblock %}

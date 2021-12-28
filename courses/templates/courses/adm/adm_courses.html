@@ -1,0 +1,115 @@
+{% extends "courses/layout.html" %}
+
+{% block title %} Courses Platform {% endblock %}
+
+{% block body %}
+
+<div class="container py-5">
+    <h3 class="mb-3">Courses</h3>
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active">Admin</li>
+            <li class="breadcrumb-item active" aria-current="page">Courses</li>
+        </ol>
+    </nav>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+
+        <table id="table" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        <div class="row">
+                            <div class="col-md-4">
+                                Course
+                            </div>
+                            <div class="col text-end">
+                                <a class="dropdown-toggle link-dark text-decoration-none" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-plus"></i> New</a>        
+                                                        
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="{% url 'newcourse' %}">New Course</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'newmodule' %}">New Module</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'newlesson' %}">New Lesson</a></li>
+                                </ul>                        
+                            </div>
+                            
+                        </div>
+
+                    </th>
+                </tr>
+            </thead>
+    
+            <tbody>
+                {% for course in courses|dictsort:"title" %}
+                    <tr>
+                        <td>
+                            <div class="row">
+                                <div class="col">
+                                    <a href="{% url 'adm_course' course.id %}" class="link-dark text-decoration-none">{{ course.title }}</a>
+                                </div>
+                                <div class="col text-end">
+                                    <a href="{% url 'course' course.id %}" class="link-dark" target="_blank" ><i class="bi bi-eye-fill me-2"></i></a>
+                                    <a href="{% url 'edit_course' course.id %}" class="link-dark"><i class="bi bi-pencil-square me-2"></i></a>
+                                    <a href="#" class="link-dark" data-bs-toggle="modal" data-bs-target="#deleteModal" data-bs-title="{{ course.title }}" data-bs-id="{{ course.id }}"><i class="bi bi-trash me-2"></i></a>
+                                    
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}   
+            </tbody>     
+        </table>
+
+    </div>
+</div>
+
+
+<!-- Modal -->
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">Are you sure?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="{% url 'del_course' %}" method="POST">
+        {% csrf_token %}
+        <div class="modal-body">      
+            <div class="mb-3">
+                <label for="recipient-name" class="col-form-label">Delete:</label>
+                <input id="modal_id" name="course_id" value="" type="hidden">
+                <h6 id="modal_text"></h6>
+            </div>                
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </div>
+    </form>
+    </div>
+  </div>
+</div>
+
+<script>
+    var deleteModal = document.getElementById('deleteModal')
+deleteModal.addEventListener('show.bs.modal', function (event) {
+    // Button that triggered the modal
+    var button = event.relatedTarget
+    // Extract info from data-bs-* attributes
+    var recipient = button.getAttribute('data-bs-title')
+    var recipient_id = button.getAttribute('data-bs-id')
+    
+    // Update the modal's content.
+    var modalBodyInput_id = deleteModal.querySelector('#modal_id')
+    var modalBodyText = deleteModal.querySelector('#modal_text')
+
+    modalBodyInput_id.value = recipient_id
+    modalBodyText.innerHTML = recipient
+    })
+</script>
+
+{% endblock %}
+
+
