@@ -1,8 +1,8 @@
-# Harvard CS50w - Final Project: Course Plataform
+# Harvard CS50w - Final Project: Course Platform
 #### Video Demo:  <https://youtu.be/4E-WjSSlQPk>
 
 
-My project is a Course Plataform with YouTube videos buit with Python, JavaScript, HTML and CSS. Frameworks: Django and Bootstrap.
+This project is a Course Platform with YouTube videos buit with Python, JavaScript, HTML and CSS. Frameworks: Django and Bootstrap.
 
 
 
